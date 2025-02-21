@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+openai
+pydantic
+sqlalchemy
+psycopg2
+pymongo
+bcrypt
+python-jose[cryptography]

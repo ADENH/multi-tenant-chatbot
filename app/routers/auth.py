@@ -13,8 +13,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 class UserCreate(BaseModel):
     username: str
     password: str
-    email: str  # Optional field
-    tenant_id: str = None  # Optional field
+    email: str = None  # Optional field
+    tenant_id: int = None  # Optional field
+    role: str = "guest",  # Default role is "guest"
 
 @router.post("/token")
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
@@ -52,13 +53,14 @@ def register_user(user_data: UserCreate, db: Session = Depends(get_db)):
         username=user_data.username,
         password_hash=hashed_password,
         tenant_id=user_data.tenant_id,
-        email=user_data.email
+        email=user_data.email,
+        role= user_data.role
     )
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
 
-    return {"message": "User registered successfully", "user_id": new_user.id}
+    return {"message": "User registered successfully", "user": new_user}
 
 @router.post("/token")
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):

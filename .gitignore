@@ -3,3 +3,5 @@ app/routers/__pycache__
 venv/Scripts
 venv
 .env
+alembic/__pycache__
+alembic/versions/__pycache__

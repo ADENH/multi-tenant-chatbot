@@ -72,3 +72,44 @@ def authenticate_user(db: Session, username: str, password: str):
         return None
     return user
 
+def require_role(required_role: str):
+    """
+    Dependency to check if the user has the required role.
+    """
+    def role_dependency(current_user: User = Depends(get_current_user)):
+        if current_user.role != required_role:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Role '{required_role}' is required to access this resource."
+            )
+        return current_user
+    return role_dependency
+
+def require_permission(permission: str):
+    """
+    Dependency to check if the user has the required permission.
+    """
+    def permission_dependency(current_user: User = Depends(get_current_user)):
+        user_permissions = ROLES_PERMISSIONS.get(current_user.role, [])
+        if permission not in user_permissions:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Permission '{permission}' is required to access this resource."
+            )
+        return current_user
+    return permission_dependency
+
+def require_tenant_access(tenant_id: str):
+    """
+    Dependency to check if the user has access to the specified tenant.
+    """
+    def tenant_dependency(current_user: User = Depends(get_current_user)):
+        if current_user.role == "super_admin":
+            return current_user  # Super admin has access to all tenants
+        if current_user.role == "admin" and current_user.tenant_id == tenant_id:
+            return current_user  # Admin has access to their assigned tenant
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have access to this tenant."
+        )
+    return tenant_dependency

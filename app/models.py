@@ -15,4 +15,5 @@ class User(Base):
     username = Column(String, unique=True, index=True)
     email = Column(String, unique=True, index=True)
     password_hash = Column(String)
-    tenant_id = Column(Integer, ForeignKey("tenants.id"))
+    tenant_id = Column(Integer, nullable=True)  # Tenant ID for tenant-specific roles
+    role = Column(String, default="guest")  # Default role is "guest"

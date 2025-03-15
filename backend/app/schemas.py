@@ -4,6 +4,7 @@ from typing import Optional
 class UserCreate(BaseModel):
     name: str
     email: str
+    username: str
     password: str
     role: str = Field(..., pattern="^(super_admin|admin|user)$")
     tenant_id: Optional[str] = None  # <-- Make tenant_id optional

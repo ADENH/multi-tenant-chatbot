@@ -21,3 +21,8 @@ class LoginRequest(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class TenantCreateRequest(BaseModel):
+    name: str
+    description: str
+

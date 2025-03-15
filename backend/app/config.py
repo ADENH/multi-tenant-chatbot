@@ -11,9 +11,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Multi-Tenant AI Chatbot"
-    SECRET_KEY: str = "your-secret-key"
+    SECRET_KEY: str =  os.getenv("SECRET_KEY", "your_secret_key")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
-    DATABASE_URL: str = "postgresql://user:password@localhost/dbname"
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost/chatbot_db")
 
     class Config:
         case_sensitive = True

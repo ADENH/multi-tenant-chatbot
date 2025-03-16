@@ -81,7 +81,7 @@ Before running the application, ensure you have the following installed:
 
 6. **Start the Server**
    ```bash
-   uvicorn app.main:app --reload
+   uvicorn backend.app.main:app --reload
    ```
 
 ---

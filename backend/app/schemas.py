@@ -24,5 +24,20 @@ class Token(BaseModel):
 
 class TenantCreateRequest(BaseModel):
     name: str
-    description: str
+    description: Optional[str] = None
+
+class TenantResponse(BaseModel):
+    tenant_id: str
+    name: str
+    description: Optional[str]
+
+class ConfigCreateRequest(BaseModel):
+    key: str
+    value: str
+
+class ConfigResponse(BaseModel):
+    config_id: str
+    tenant_id: str
+    key: str
+    value: str
 

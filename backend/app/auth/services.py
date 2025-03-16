@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
-from backend.app.models.models import User
+from backend.app.models.models import User, Tenant
 from backend.app.auth.security import hash_password, verify_password, create_access_token
 from backend.app.schemas import UserCreate, LoginRequest, Token
-from fastapi import HTTPException, status, Depends
+from fastapi import HTTPException, status, Depends, Header
 from fastapi.security import OAuth2PasswordBearer
 from backend.app.database import get_db
 from backend.app.config import settings
@@ -84,4 +84,19 @@ def require_super_admin(user: User = Depends(get_current_user)):
         )
     return user
     
+
+def get_current_tenant(x_tenant_id: str = Header(None), db: Session = Depends(get_db)):
+    if not x_tenant_id:
+        raise HTTPException(status_code=400, detail="Tenant ID is required in X-Tenant-ID header")
+    tenant = db.query(Tenant).filter(Tenant.id == x_tenant_id).first()
+    if not tenant:
+        raise HTTPException(status_code=404, detail="Tenant not found")
+    return tenant
+
+def get_current_super_admin(db: Session = Depends(get_db), x_tenant_id: str = Header(None)):
+    # Ensure user is a super admin
+    user = db.query(User).filter(User.tenant_id == x_tenant_id, User.role == "super_admin").first()
+    if not user:
+        raise HTTPException(status_code=403, detail="Only super admins can perform this action")
+    return user
 
